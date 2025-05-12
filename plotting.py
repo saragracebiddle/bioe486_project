@@ -51,8 +51,13 @@ def generate_target(image_id, file):
 
         rows = data.loc[data['image_id'] == image_id]
 
-        imgPath = os.path.join('mias',rows['severity'].iloc[0], rows['refno'].iloc[0] + '.png')
-        img = Image.open(imgPath).convert('L')
+        imgPath = os.path.join('mias_data', rows['refno'].iloc[0] + '.pgm')
+        with open(imgPath, 'rb') as pgmf:
+            im = plt.imread(pgmf)
+
+        img = np.array(im, dtype = np.uint8)
+        img = Image.fromarray(img.astype('uint8'), 'L')
+
 
         # Bounding boxes for objects
         # In coco format, bbox = [xmin, ymin, width, height]

@@ -19,7 +19,7 @@ class CustomTensorDataset(object):
 	def __init__(self, transforms=None):
 		#self.tensors = tensors
 		self.transforms = transforms
-		self.imgs = list_files_walk(config.IMAGES_PATH)
+		self.imgs = list_files_walk('mias_data/')
 
 	def __getitem__(self, index):
 		# grab the image, label, and its bounding box coordinates
