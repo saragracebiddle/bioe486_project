@@ -21,7 +21,7 @@ def generate_box(info, index, img):
         R = w // 4
     else:
         X = float(X)
-        Y = float(Y)
+        Y = h - float(Y)
         R = float(R)
         
     centerX = float(X) / w
@@ -90,9 +90,12 @@ def plot_image(img_tensor, annotation):
 
     # Display the image
     ax.imshow(img.permute(1, 2, 0))
+
+    c, h,w = img.shape
     
     for box in annotation["boxes"]:
         xmin, ymin, xmax, ymax = box
+        xmin, ymin, xmax, ymax = int(xmin * w), int(ymin * h), int(xmax * w), int(ymax * h)
 
         # Create a Rectangle patch
         rect = patches.Rectangle((xmin,ymin),(xmax-xmin),(ymax-ymin),linewidth=1,edgecolor='r',facecolor='none')
