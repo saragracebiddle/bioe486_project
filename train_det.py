@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 import torch
 
-def train(objectDetector, bboxLossFunc, classLossFunc, trainDS, testDS):
+def train(objectDetector, bboxLossFunc, classLossFunc, trainDS, testDS, opt):
     print("[INFO] training the network...")
     H = {"total_train_loss": [], "total_val_loss": [], "train_class_acc": [],
 	 "val_class_acc": []}

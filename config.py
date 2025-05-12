@@ -4,7 +4,7 @@ import os
 # define the base path to the input dataset and then use it to derive
 # the path to the input images and annotation CSV files
 BASE_PATH = "mias"
-IMAGES_PATH = os.path.sep.join([BASE_PATH, "mias"])
+IMAGES_PATH = "mias"
 ANNOTS_PATH = os.path.sep.join([BASE_PATH, "mias_info"])
 # define the path to the base output directory
 BASE_OUTPUT = "output"
