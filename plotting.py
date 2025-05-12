@@ -77,6 +77,9 @@ def generate_target(image_id, file):
         target["boxes"] = boxes
         target["labels"] = labels
         target["image_id"] = img_id
+
+        if np.isnan((target['boxes']).numpy()).any() or target['boxes'].shape == torch.Size([0]):
+            target['boxes'] = torch.zeros((0,4),dtype=torch.float32)
         
         return img, target
     
