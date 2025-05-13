@@ -16,7 +16,7 @@ def list_files_walk(start_path='.'):
 
     return out
 
-class CustomTensorDataset(object):
+class CustomTensorDataset(Dataset):
     # initialize the constructor
     def __init__(self, transforms=None):
         #self.tensors = tensors
@@ -59,7 +59,7 @@ class CustomTensorDataset(object):
             image = transformed["image"]
             boxes = torch.tensor(transformed["bboxes"], dtype=torch.float32)
             labels = torch.tensor(transformed["labels"], dtype=torch.int64)
-    
+            
         target["boxes"] = boxes
         target["labels"] = labels
     
