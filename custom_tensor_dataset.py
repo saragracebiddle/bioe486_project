@@ -44,9 +44,10 @@ class CustomTensorDataset(Dataset):
         
         if isinstance(boxes, torch.Tensor):
             boxes = boxes.numpy()
-    
-        boxes[:, [0, 2]] *= w
-        boxes[:, [1, 3]] *= h
+
+        if boxes.shape[0] > 0:
+            boxes[:, [0, 2]] *= w
+            boxes[:, [1, 3]] *= h
         boxes = boxes.tolist()
         labels = target["labels"].tolist()
     
