@@ -1,0 +1,5 @@
+train: C:/Users/seren/bioe486_project/YOLO_detection/datasets/images/train
+val: C:/Users/seren/bioe486_project/YOLO_detection/datasets/images/val
+
+nc: 2
+names: ['malignant', 'benign']
