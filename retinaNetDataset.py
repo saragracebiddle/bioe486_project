@@ -5,7 +5,8 @@ import numpy as np
 import torch
 import pandas as pd
 import matplotlib.pyplot as plt
-from plotting import generate_box, generate_label
+from denoise import denoise
+import cv2
 
 def get_label(rows, r):
     label = rows['severity'].iloc[r]
@@ -15,15 +16,53 @@ def get_label(rows, r):
         return 2
     else:
         return 0
+    
+def get_box(info, index, img):
+    (h, w) = np.array(img).shape[:2]
+
+    X = info['x'].iloc[index]
+    Y = info['y'].iloc[index]
+    R = info['r'].iloc[index]
+
+    if X == '*NOTE':
+        Y = h //2
+        yline = img[Y,:]
+        startX = np.min(np.argwhere(yline > 0.5))
+        endX = np.max(np.argwhere(yline > 0.5))
+        X = (endX - startX) //2 + startX
+        xline = img[:,X]
+        startY = np.min(np.argwhere(xline > 0.5)) / h
+        endY = np.max(np.argwhere(xline > 0.5)) / h
+        startX /= w
+        endX /= w
+
+    else:
+        X = float(X)
+        Y = h - float(Y)
+        R = float(R)
+        centerX = float(X) / w
+        centerY = float(Y) / h
+        startX = centerX - (float(R)/w)
+        startY = centerY - (float(R/h))
+        endX = centerX + (float(R)/w)
+        endY = centerY + (float(R)/h)
+
+    #if index //2 == 0:
+        #print()
+    #    startX2 = 1 - endX
+    #    endX2 = 1 - startX
+    #    startX = startX2
+    #    endX = endX2
+     
+    return [startX, startY, endX, endY]
 
 def get_target(image_name, rows, index):
         
-    imgPath = os.path.join('mias_data', rows['refno'].iloc[0] + '.pgm')
-    with open(imgPath, 'rb') as pgmf:
-        im = plt.imread(pgmf)
-
-    img = np.array(im, dtype = np.float32)
-    img /= img.max()     
+    imgPath = os.path.join('mias_data_denoised', rows['refno'].iloc[0] + '.png')
+    img = cv2.imread(imgPath, 0)
+    img = img.astype(np.float32)    
+    img /= 255.0    
+    
 
     # Bounding boxes for objects
     # In coco format, bbox = [xmin, ymin, width, height]
@@ -32,7 +71,7 @@ def get_target(image_name, rows, index):
     labels = []
     areas = []
     for r in range(len(rows['refno'])):
-        (xmin, ymin, xmax,  ymax) = generate_box(rows, r, img)
+        (xmin, ymin, xmax,  ymax) = get_box(rows, r, img)
 
         boxes.append([xmin, ymin, xmax, ymax])
         label = get_label(rows, r)
@@ -85,7 +124,7 @@ class customDataset(Dataset):
         
         image, target = get_target(refno, rows, index)
     
-        image = np.stack([np.array(image)] * 3, axis=-1)
+        #image = np.stack([np.array(image)] * 3, axis=-1)
         h, w = image.shape[:2]
 
         boxes = target["boxes"]
